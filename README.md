@@ -6,6 +6,7 @@ Create new project using template: Blazor WebAssembly.
 1- In Server project, add following nuget packages:
  -  IdentityModel
  - IdentityModel.AspNetCore
+
 2- Open Program.cs, and add the following code parts:
 	
 ```
@@ -57,8 +58,8 @@ Create new project using template: Blazor WebAssembly.
 ```
 	"ADFS": {
 	    "ClientId": "{client id}",
-	    "MetadataAddress": "https://fs.cfl.lu/adfs/.well-known/openid-configuration",
-	    "PostLogoutRedirectUri": "{logout_redirect_uri}"
+	    "MetadataAddress": "{metadata address: host/.well-known/openid-configuration}",
+	    "PostLogoutRedirectUri": "{logout_redirect_uri: https://localhost:44365/}"
 	  }
 ```
 4- We will need now to implement Login and Logout, to do this: create a new controller AccountController, and add the following code:
