@@ -1,5 +1,11 @@
 # BlazorWasmOpenIdADFS
 
+The goal of this project is to describe how we can configure sso authentication with openid connect targeting on premise ADFS as identity server.
+
+#### Destination
+Poeple who work in an entreprise with very limited and restricted access to cloud services (AzureAd), and use ADFS: Active Directory Federation Services on premise as their identity server.
+
+#### To start
 Create new project using template: Blazor WebAssembly.
 	
 ## A- Server side
@@ -297,12 +303,12 @@ Create new project using template: Blazor WebAssembly.
 	</AuthorizeView>
 ```
 	
-5- Open RedirectToLogin.razor and change the Navigate to by this line:
+5- Open RedirectToLogin.razor and change the call NavigateTo by this line:
 ```
 	Navigation.NavigateTo($"Account/Login?", true);
 ```
 	
-The parameter true, is to force loading.
+The parameter true, is to force loading when resirecting to authenticate user.
 		
 6- Finally since we want to implement authentication using OpenId connect, we need to reference the right AuthenticationService js file. To do this, open index.html, and add this line:
 ```
