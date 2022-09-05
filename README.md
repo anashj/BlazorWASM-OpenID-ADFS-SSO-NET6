@@ -1,4 +1,4 @@
-# BlazorWasmOpenIdADFS
+# Blazor WASM OpenId ADFS
 
 The goal of this project is to describe how we can configure sso authentication with openid connect targeting on premise ADFS as identity server.
 
