@@ -1,12 +1,14 @@
 # BlazorWasmOpenIdADFS
-	1- Create new project using template: Blazor WebAssembly.
+
+Create new project using template: Blazor WebAssembly.
 	
-	A- Server side
-	1- In Server project, add following nuget packages:
-	   -  IdentityModel
-	   - IdentityModel.AspNetCore
-	2- Open Program.cs, and add the following code parts:
+## A- Server side
+1- In Server project, add following nuget packages:
+ -  IdentityModel
+ - IdentityModel.AspNetCore
+2- Open Program.cs, and add the following code parts:
 	
+```
 	JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 	builder.Services.AddAuthentication(options =>
 	{
@@ -50,18 +52,18 @@
 	…
 	
 	builder.Services.AddAccessTokenManagement();
-	
-	3- In appsettings.json, add the openid configuration metadata and ClientId for your ADFS identity provider (on prem in this case):
-	
+```
+3- In appsettings.json, add the openid configuration metadata and ClientId for your ADFS identity provider (on prem in this case):
+```
 	"ADFS": {
 	    "ClientId": "{client id}",
 	    "MetadataAddress": "https://fs.cfl.lu/adfs/.well-known/openid-configuration",
 	    "PostLogoutRedirectUri": "{logout_redirect_uri}"
 	  }
+```
+4- We will need now to implement Login and Logout, to do this: create a new controller AccountController, and add the following code:
 	
-	4- We will need now to implement Login and Logout, to do this: create a new controller AccountController, and add the following code:
-	
-	
+```
 	[Route("[controller]")]
 	public class AccountController : ControllerBase
 	{
@@ -82,11 +84,13 @@
 	      CookieAuthenticationDefaults.AuthenticationScheme,
 	      OpenIdConnectDefaults.AuthenticationScheme);
 	 }
-	
-	5- The second thing that we'll need, is getting user claims when he's authenticated. In order to do this, we'll need first to:
-	6-1-  Add 2 models in Shared project:
-	• ClaimValue
-	
+```
+5- The second thing that we'll need, is getting user claims when he's authenticated. In order to do this, we'll need first to:
+   
+   5-1-  Add 2 models in Shared project:
+   
+   • ClaimValue
+```
 	public class ClaimValue
 	{
 	   public ClaimValue()
@@ -100,9 +104,9 @@
 	   public string Type { get; set; }
 	   public string Value { get; set; }
 	}
-	
-	• UserInfo
-	
+```
+   • UserInfo
+```
 	public class UserInfo
 	{
 	    public static readonly UserInfo Anonymous = new UserInfo();
@@ -111,9 +115,9 @@
 	    public string RoleClaimType { get; set; }
 	    public ICollection<ClaimValue> Claims { get; set; }
 	}
-	
-	6-2-  Create UserController that will be responsible for getting current user info:
-	
+```
+   5-2-  Create UserController that will be responsible for getting current user info:
+```
 	[Route("[controller]")]
 	[ApiController]
 	public class UserController : ControllerBase
@@ -161,10 +165,10 @@
 	      return userInfo;
 	    }
 	 }
-	
-	B- Client side
-	1- In order to connect via OpenId Connect for Blazor WASM , we need to create a custom authentication state provider (it's mandatory). To do this, create a Services folder , and add a new class that inherits from AuthenticationStateProvider, the goal here is to override GetAuthenticationStateAsync.
-	
+```
+## B- Client side
+1- In order to connect via OpenId Connect for Blazor WASM , we need to create a custom authentication state provider (it's mandatory). To do this, create a Services folder , and add a new class that inherits from AuthenticationStateProvider, the goal here is to override GetAuthenticationStateAsync.
+```
 	public class HostAuthenticationStateProvider : AuthenticationStateProvider
 	{
 	   private static readonly TimeSpan _userCacheRefreshInterval = TimeSpan.FromSeconds(60);
@@ -234,9 +238,10 @@
 	      return new ClaimsPrincipal(identity);
 	    }
 	 }
+```
 	
-	2- Add a new service called AuthorizedHandler (not mandatory), the benefit of this service is to delegating requests on whether user is authenticated or not:
-	
+2- Add a new service called AuthorizedHandler (not mandatory), the benefit of this service is to delegating requests on whether user is authenticated or not:
+```
 	public class AuthorizedHandler : DelegatingHandler
 	{
 	    private readonly HostAuthenticationStateProvider _authenticationStateProvider;
@@ -267,17 +272,19 @@
 	            return responseMessage;
 	    }
 	}
+```
 	
-	3- Open Program.cs, and register all required services as shown below:
-	
+3- Open Program.cs, and register all required services as shown below:
+```
 	builder.Services.AddOptions();
 	builder.Services.AddAuthorizationCore();
 	builder.Services.AddScoped<HostAuthenticationStateProvider>();
 	builder.Services.AddScoped<AuthenticationStateProvider>(sp =>  sp.GetRequiredService<HostAuthenticationStateProvider>());
 	builder.Services.AddTransient<AuthorizedHandler>();
-		
-	4- In the LoginDisplay.razor, change the binding to use the Login, Logout of Accountcontroller, and comment the SignOutManager since it's already implemented in Logout:
+```
 	
+4- In the LoginDisplay.razor, change the binding to use the Login, Logout of Accountcontroller, and comment the SignOutManager since it's already implemented in Logout:
+```
 	<AuthorizeView>
 	    <Authorized>
 	        Hello, @context.User.Identity?.Name!
@@ -287,15 +294,18 @@
 	        <a href="Account/Login">Log in</a>
 	    </NotAuthorized>
 	</AuthorizeView>
+```
 	
-	5- Open RedirectToLogin.razor and change the Navigate to by this line:
-	
+5- Open RedirectToLogin.razor and change the Navigate to by this line:
+```
 	Navigation.NavigateTo($"Account/Login?", true);
-	The parameter true, is to force loading.
+```
 	
-	
-	6- Finally since we want to implement authentication using OpenId connect, we need to reference the right AuthenticationService js file. To do this, open index.html, and add this line:
-	
+The parameter true, is to force loading.
+		
+6- Finally since we want to implement authentication using OpenId connect, we need to reference the right AuthenticationService js file. To do this, open index.html, and add this line:
+```
 	<script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
+```
 	
-	To avoid all sort of problems, you can comment the line just above that references Msal AuthenticationService.
+To avoid all sort of problems, you can comment the line just above that references Msal AuthenticationService.
