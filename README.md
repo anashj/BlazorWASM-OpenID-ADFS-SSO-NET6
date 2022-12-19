@@ -1,9 +1,9 @@
 # Blazor WASM OpenId ADFS
 
-The goal of this project is to describe how we can configure sso authentication with openid connect targeting on premise ADFS as identity server.
+The goal of this project is to describe how we can configure SSO authentication with OpenID Connect targeting on-premise ADFS as an identity server.
 
 #### Destination
-Poeple who work in an entreprise with very limited and restricted access to cloud services (AzureAd), and use ADFS: Active Directory Federation Services on premise as their identity server.
+People who work in an a context with very limited and restricted access to cloud services (Azure AD), and use ADFS: Active Directory Federation Services on-premise as their identity server.
 
 #### To start
 Create new project using template: Blazor WebAssembly.
@@ -174,7 +174,7 @@ Create new project using template: Blazor WebAssembly.
 	 }
 ```
 ## B- Client side
-1- In order to connect via OpenId Connect for Blazor WASM , we need to create a custom authentication state provider (it's mandatory). To do this, create a Services folder , and add a new class that inherits from AuthenticationStateProvider, the goal here is to override GetAuthenticationStateAsync.
+1- In order to connect via OpenId Connect for Blazor WASM, we need to create a custom authentication state provider (it's mandatory). To do this, create a Services folder, and add a new class that inherits from AuthenticationStateProvider, the goal here is to override GetAuthenticationStateAsync.
 ```
 	public class HostAuthenticationStateProvider : AuthenticationStateProvider
 	{
@@ -247,7 +247,7 @@ Create new project using template: Blazor WebAssembly.
 	 }
 ```
 	
-2- Add a new service called AuthorizedHandler (not mandatory), the benefit of this service is to delegating requests on whether user is authenticated or not:
+2- Add a new service called AuthorizedHandler (not mandatory), the benefit of this service is to delegate requests on whether user is authenticated or not:
 ```
 	public class AuthorizedHandler : DelegatingHandler
 	{
@@ -308,11 +308,11 @@ Create new project using template: Blazor WebAssembly.
 	Navigation.NavigateTo($"Account/Login?", true);
 ```
 	
-The parameter true, is to force loading when resirecting to authenticate user.
+The parameter true is to force loading when redirecting to authenticate the user.
 		
 6- Finally since we want to implement authentication using OpenId connect, we need to reference the right AuthenticationService js file. To do this, open index.html, and add this line:
 ```
 	<script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
 ```
 	
-To avoid all sort of problems, you can comment the line just above that references Msal AuthenticationService.
+To avoid all sorts of problems, you can comment on the line just above that references Msal AuthenticationService.
